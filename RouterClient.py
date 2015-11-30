@@ -19,7 +19,7 @@ def createListenSocket(port):
         # Establish the connection
         connectionSocket, addr = listenSocket.accept()
         try:
-            message = connectionSocket.recv(1024) #size may need to be adjusted when format of the packet format has be finalized
+            message = connectionSocket.recv(1024) #size may need to be adjusted when format of the packet has be finalized
             print message
             #Need to parse message and store information
             #Two possible types of messages, routing table updates from other nodes, node address information from server
@@ -39,14 +39,13 @@ def sendToNode():
 
 
 def main():
-    TCP_IP = '76.183.92.14'
+    TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     serverConnectThread = threading.Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
 
     while True:
         pass
-
 
 
 main()
