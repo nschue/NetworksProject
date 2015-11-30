@@ -1,6 +1,8 @@
 from socket import *
 import threading
 
+nodes = []
+
 class Node:
     nodeIP = ''
     nodeID = 0
@@ -21,14 +23,19 @@ def createListenSocket(port):
             print message
             #Need to parse message and store information
             #Two possible types of messages, routing table updates from other nodes, node address information from server
+        except:
+            print "Error in createListenSocket"
 
 #Connects to the server to be added to the list of nodes
 def connectToServer(TCP_IP,TCP_PORT):
     sock = socket(AF_INET,SOCK_STREAM)
-    sock.connect((TCP_IP,TCP_PORT))
-
+    try:
+        sock.connect((TCP_IP,TCP_PORT))
+    except:
+        print"Error in connectToServer"
 
 def sendToNode():
+    return
 
 
 def main():
