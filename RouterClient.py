@@ -35,15 +35,21 @@ def connectToServer(TCP_IP,TCP_PORT):
         print"Error in connectToServer"
 
 #Function to call when sending out routing table information
-def sendToNode(node,TCP_PORT):
+#Thinking updateNode function will iterate through the nodes list passing each node into this fuction
+def sendToNode(node,TCP_PORT, data):
     sock = socket(AF_INET, SOCK_STREAM)
     try:
         sock.connect((node.nodeIP, TCP_PORT))
-        sock.send("Test")#Routing Table will be passed through here
+        sock.send(data)#Routing Table will be passed through here
     except:
         print ("Error in sendToNode")
     return
 
+#iterate through each node in the nodes list to pass the update routing information to each node
+def updateNodes(TCP_PORT, data):
+    for node in nodes:
+        sendToNode(node, TCP_PORT, data)
+    return
 
 def main():
     TCP_IP = raw_input("Enter Server IP: ")
