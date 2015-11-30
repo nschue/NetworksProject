@@ -34,7 +34,14 @@ def connectToServer(TCP_IP,TCP_PORT):
     except:
         print"Error in connectToServer"
 
-def sendToNode():
+#Function to call when sending out routing table information
+def sendToNode(node,TCP_PORT):
+    sock = socket(AF_INET, SOCK_STREAM)
+    try:
+        sock.connect((node.nodeIP, TCP_PORT))
+        sock.send("Test")#Routing Table will be passed through here
+    except:
+        print ("Error in sendToNode")
     return
 
 
@@ -47,7 +54,7 @@ def main():
     while True:
         pass
 
-
+###Start of the program####
 main()
 
 
