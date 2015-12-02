@@ -12,7 +12,7 @@ class Node:
      #   self.nodeID = random.
 
 
-
+#Opens listen socket for nodes to connect
 def listenSocket(port):
     global nodes
     serverSocket = socket(AF_INET, SOCK_STREAM)
