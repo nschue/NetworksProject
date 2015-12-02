@@ -26,6 +26,10 @@ def listenSocket(port):
         tempNode = Node()
         tempNode.nodeIP = addr[0]
         tempNode.nodeID = len(nodes)
+		for x in nodes:
+			if(tempNode.nodeIP = x.nodeIP)
+				break
+				
         nodes.append(tempNode)
         for x in nodes:
             print 'Node ' + str(x.nodeID) + ': ' + x.nodeIP
