@@ -1,6 +1,7 @@
 import random
 import threading
 from socket import *
+import json
 
 nodes = []
 
@@ -59,7 +60,7 @@ def sendToNode(client_IP,TCP_PORT):
         message = []
         for x in nodes:
             message.append(str(x.nodeID)+','+str(x.nodeIP))
-        sock.sendall(str(message))
+        sock.sendall(json.dumps(message))
 
     finally:
         sock.close()
