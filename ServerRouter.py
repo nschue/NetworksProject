@@ -25,7 +25,7 @@ def listenSocket(port, numberOfNodes):
     serverSocket.listen(5) # Listen for connections
     print 'Listening for connections...'
     
-    while nodes.lenth() < numberOfNodes:
+    while len(nodes) < numberOfNodes:
         # Establish the connection
         connectionSocket, client_IP = serverSocket.accept()
         print 'Connection made'
@@ -57,18 +57,18 @@ def sendToNode(client_IP,TCP_PORT):
 
         # Send a node ID number followed by its corresponding IP to the client
         for x in nodes:
-            sock.sendall(x.nodeID)
-            sock.sendall(x.nodeIP)
+            sock.sendall(str(x.nodeID)+','+str(x.nodeIP)+',')
 
     finally:
         sock.close()
 
 def main():
-    numberOfNodes = raw_input("How many nodes are in the network? ")
+    numberOfNodes = int(raw_input("How many nodes are in the network? "))
     listenThread = threading.Thread(target=listenSocket(8007, numberOfNodes))
     listenThread.start()
+    listenThread.join()
     for node in nodes:
-        sendToNode(node.IP, 8007)
+        sendToNode(node.nodeIP, 8007)
 
 
 main()
