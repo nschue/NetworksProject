@@ -60,7 +60,7 @@ def sendToNode(client_IP,TCP_PORT):
         message = []
         for x in nodes:
             message.append(str(x.nodeID)+','+str(x.nodeIP))
-        sock.sendall(json.dumps(message))
+        sock.sendall(str(message))
 
     finally:
         sock.close()
