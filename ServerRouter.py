@@ -21,7 +21,7 @@ def listenSocket(port, numberOfNodes):
     print 'Socket Created'
 
     # The socket gets bound to the port
-    serverSocket.bind(('localhost', port))
+    serverSocket.bind(('', port))
     serverSocket.listen(5) # Listen for connections
     print 'Listening for connections...'
     
@@ -56,8 +56,10 @@ def sendToNode(client_IP,TCP_PORT):
         print 'Connection from', client_IP
 
         # Send a node ID number followed by its corresponding IP to the client
+        message = []
         for x in nodes:
-            sock.sendall(str(x.nodeID)+','+str(x.nodeIP)+',')
+            message.append(str(x.nodeID)+','+str(x.nodeIP)+',')
+        sock.sendall(str(message))
 
     finally:
         sock.close()

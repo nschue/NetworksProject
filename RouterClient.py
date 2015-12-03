@@ -47,6 +47,7 @@ def server_listen_socket(port):
         # size may need to be adjusted when format of the packet has be finalized
         print message
         message = message.split(',')
+        message = message.strip('[]')
         for i in range(len(message)/2):
             temp_node = Node()
             temp_node.nodeID = int(message[2 * i])
@@ -65,6 +66,7 @@ def connectToServer(TCP_IP, TCP_PORT):
         sock.connect((TCP_IP, TCP_PORT))
     except:
         print"Error in connectToServer"
+        connectToServer(raw_input("Enter Server IP and try again: "), TCP_PORT)
 
 
 # Function to call when sending out routing table information
