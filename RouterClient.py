@@ -47,14 +47,13 @@ def server_listen_socket(port):
     try:
         connection_socket, addr = listen_socket.accept()
         message = connection_socket.recv(1024)
-        message = json.loads(message)
         # size may need to be adjusted when format of the packet has be finalized
         # print message
-        # message = message.strip("[]")
+        message = message.strip("[]")
         # print message
-        # message = message.replace("'", "")
+        message = message.replace("'", "")
         # print message
-        # message = message.split(',')
+        message = message.split(',')
         print message
 
         for i in range(len(message)/2):
@@ -63,6 +62,8 @@ def server_listen_socket(port):
             temp_node.nodeIP = message[2 * i + 1]
             nodes.append(temp_node)
 
+        listen_socket.close()
+        print'Leaving server_listen_socket'
         # Need to parse message and store information
         # node address information from server
     except:
@@ -103,11 +104,11 @@ def main():
     serverConnectThread = threading.Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
     server_listen_socket(TCP_PORT) # listens for node information coming from server
-    node_listen_thread = threading.Thread(target=node_listen_socket(TCP_PORT))
-    node_listen_thread.start()
+    # node_listen_thread = threading.Thread(target=node_listen_socket(TCP_PORT))
+    # node_listen_thread.start()
     # after server node information has been collected
     # Need to compare client IP with nodeIPs to determine nodeID
-    self_id = int(raw_input("Enter clients nodeIP: "))
+    self_id = int(raw_input("Enter clients nodeID: "))
     neighbor_input = raw_input('Which nodes am I connecting to (nodeID)? \'-1\' to signal no more neighbors.')
     while neighbor_input != '-1':  # Adds nodes to neighbors by reading nodeID from input
         try:
