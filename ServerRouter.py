@@ -58,7 +58,7 @@ def sendToNode(client_IP,TCP_PORT):
         # Send a node ID number followed by its corresponding IP to the client
         message = []
         for x in nodes:
-            message.append(str(x.nodeID)+','+str(x.nodeIP)+',')
+            message.append(str(x.nodeID)+','+str(x.nodeIP))
         sock.sendall(str(message))
 
     finally:
