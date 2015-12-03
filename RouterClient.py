@@ -86,6 +86,7 @@ def update_nodes(TCP_PORT, data):
 
 
 def main():
+    global cost_Matrix
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     serverConnectThread = threading.Thread(target=connectToServer(TCP_IP,TCP_PORT))
@@ -94,6 +95,7 @@ def main():
 
     # after server node information has been collected
     print 'I am node: '  # Need to compare client IP with nodeIPs to determine nodeID
+    self_ID = 0
     neighbor_input = raw_input('Which nodes am I connecting to (nodeID)? \'-1\' to signal no more neighbors.')
     while neighbor_input != '-1':  # Adds nodes to neighbors by reading nodeID from input
         try:
@@ -104,7 +106,8 @@ def main():
     print 'Neighbor nodes are: '
     for node in neighbors:
         print "Node", node.nodeID
-
+        cost_Matrix[self_ID][node.nodeID] = 1;
+    print cost_Matrix
     # need to add distance to neighbors here
     while True:
         pass
