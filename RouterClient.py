@@ -90,16 +90,15 @@ def main():
     TCP_PORT = 8007
     serverConnectThread = threading.Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
-    server_listen_socket(TCP_PORT)
-    while 1:
-        pass
-    # listen for information from server
+    server_listen_socket(TCP_PORT) # listens for node information coming from server
+
     # after server node information has been collected
-    print 'I am node: '
-    neighbor_input = raw_input('Which nodes am I connecting to (nodeID)? \n\'-1\' to signal no more neighbors.')
+    print 'I am node: '  # Need to compare client IP with nodeIPs to determine nodeID
+    neighbor_input = raw_input('Which nodes am I connecting to (nodeID)? \'-1\' to signal no more neighbors.')
     while neighbor_input != '-1':  # Adds nodes to neighbors by reading nodeID from input
         try:
-            neighbors.append(nodes[int(neighbor_input)])  # Adds neighbor from the nodes list which is filled by the server
+            neighbors.append(nodes[int(neighbor_input)])
+            # Adds neighbor from the nodes list which is filled by the server
         finally:
             neighbor_input = raw_input()
     print 'Neighbor nodes are: '
