@@ -44,10 +44,16 @@ def server_listen_socket(port):
     try:
         connection_socket, addr = listen_socket.accept()
         message = connection_socket.recv(1024)
+
         # size may need to be adjusted when format of the packet has be finalized
         print message
+        message = message.strip("[]")
+        print message
+        message = message.replace("'", "")
+        print message
         message = message.split(',')
-        message = message.strip('[]')
+        print message
+
         for i in range(len(message)/2):
             temp_node = Node()
             temp_node.nodeID = int(message[2 * i])
@@ -107,7 +113,7 @@ def main():
             neighbor_input = raw_input()
     print 'Neighbor nodes are: '
     for node in neighbors:
-        print "Node", node.nodeID
+        print "Node", node.nodeID,": ", node.nodeIP
         cost_Matrix[self_ID][node.nodeID] = 1;
     print cost_Matrix
     # need to add distance to neighbors here
