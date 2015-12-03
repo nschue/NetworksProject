@@ -3,14 +3,14 @@ class node:
         self.ID   = ''
         self.dist = [0]*20
         self.fro  = [0]*20
-    
-    
-costmat = [[0 for x in range(20)] for x in range(20)] 
+
+
+costmat = [[0 for x in range(20)] for x in range(20)]
 rt = [0]*10
 
 for i in range(10):
     rt.insert(i, node('ID', 0, 0))
-    
+
 print 'Enter the number of nodes'
 n = raw_input()
 
