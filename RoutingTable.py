@@ -6,13 +6,13 @@ class Route:
         self.networkID = 0
         self.nextHop = ""
         self.cost = 0.0
-        self.interface = "WIFI?"
+        self.interface = "Wifi?"
 
     def update_next_hop(self, next_ip):
         self.nextHop = next_ip
 
-    def update_network_id(self, nework_id):
-        self.networkID = nework_id
+    def update_network_id(self, network_id):
+        self.networkID = network_id
 
     def update_cost(self, cost):
         self.cost = cost
@@ -29,10 +29,14 @@ class RoutingTable:
         for node in nodes:
             self.nodes.append(node)
             self.table.append(Route)
+            self.table[node.nodeID].networkID = node.nodeID
+            self.table[node.nodeID].interface = "Wifi" 
+
 
         for neighbor in neighbors:
+
             self.neighbors.append(neighbor)
-            self.table[neighbor.nodeID].networkID = neighbor.nodeID
+
 
 
     def print_routing_table(self):
