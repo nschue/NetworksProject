@@ -7,7 +7,7 @@ class node:
 
 def dvr(number_nodes, costmat):
     rt = [0]*10
-    from_list = []
+    next_hop_list = []
 
     for i in range(10):
         rt.insert(i, node('ID', 0, 0))
@@ -26,7 +26,7 @@ def dvr(number_nodes, costmat):
                 if rt[i].dist[j] > costmat[i][k]+rt[k].dist[j]:
                     rt[i].dist[j] = rt[i].dist[k]+rt[k].dist[j]
                     rt[i].fro[j] = k
-                    from_list.append(k)
+                    next_hop_list.append(k)
 
     for i in range(number_nodes):
         for j in range(number_nodes):
@@ -35,6 +35,6 @@ def dvr(number_nodes, costmat):
     print costmat
     print 'Exiting DVR'
 
-    return costmat, from_list
+    return costmat, next_hop_list
 
 

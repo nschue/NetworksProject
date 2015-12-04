@@ -25,7 +25,6 @@ def node_listen_socket(port):
     listen_socket = socket(AF_INET, SOCK_DGRAM)
     listen_socket.bind(('', port))
     while True:
-        # Establish the connection
         try:
             message, address = listen_socket.recvfrom(4096)
             # size may need to be adjusted when format of the packet has be finalized
@@ -83,10 +82,11 @@ def connectToServer(TCP_IP, TCP_PORT):
 
 # Function to call when sending out routing table information
 # Thinking updateNode function will iterate through the nodes list passing each node into this fuction
-def send_to_node(node, udp_port, data):
+def send_to_node(node, udp_port, routing_table):
     sock = socket(AF_INET, SOCK_DGRAM)
+
     try:
-        sock.sendto(json.dumps(data), (node.nodeIP, udp_port))  # Routing Table will be passed through here
+        sock.sendto(json.dumps(routing_table), (node.nodeIP, udp_port))  # Routing Table will be passed through here
     except:
         print ("Error in send_to_node")
 
@@ -99,21 +99,31 @@ def update_nodes(udp_port, data):
 
 
 # Updates current routing table with new data
-def update_routing_table(node_ip, new_cost_matrix, udp_port):
+def update_routing_table(node_ip, neighbor_routing_table, udp_port):
     global cost_Matrix
     global self_id
+    global routing_Table
+    next_hops = []
     node_ip_list = []
+
+    # Finds nodeID
     for node in nodes:
         node_ip_list.append(node.nodeIP)
     update_node_id = node_ip_list.index(node_ip)
-    for node in nodes:
-        cost_Matrix[update_node_id][node.nodeID] = new_cost_matrix[update_node_id][node.nodeID]
-    dvr_cost_matrix = dvr(len(nodes), cost_Matrix)
+
+    # Populate cost matrix with new costs
+    for i in range(len(nodes)):
+        cost_Matrix[update_node_id][i]= neighbor_routing_table.table[i].cost
+    dvr_cost_matrix, next_hops = dvr(len(nodes), cost_Matrix)
 
     # if cost to any nodes have changed from self.node send an update to neighbors
     if dvr_cost_matrix[self_id] != cost_Matrix[self_id]:
         update_nodes(udp_port, dvr_cost_matrix)
     cost_Matrix = dvr_cost_matrix
+
+    for i in range(len(next_hops)):
+        routing_Table[i].nextHop = node[next_hops[i]].nodeIP
+        routing_Table[i].cost = cost_Matrix[self_id][i]
 
     print "New routing table"
     print cost_Matrix
@@ -130,10 +140,9 @@ def main():
     UDP_PORT = 520
     serverConnectThread = Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
-    server_listen_socket(TCP_PORT) # listens for node information coming from server
+    server_listen_socket(TCP_PORT)  # listens for node information coming from server
     node_listen_thread = Thread(target=node_listen_socket, args=(UDP_PORT,))
     node_listen_thread.start()
-    print 'Still running main'
     # after server node information has been collected
     # Need to compare client IP with nodeIPs to determine nodeID
     self_id = int(raw_input("Enter clients nodeID: "))
@@ -145,25 +154,30 @@ def main():
         finally:
             neighbor_input = raw_input()
     for i in range(len(nodes)):
-        routing_Table.table.append(Route)
+        routing_Table.table.append(Route())
 
     for i in range(len(nodes)):
         routing_Table.table[i].networkID = i
         routing_Table.table[i].cost = 0.0
         routing_Table.table[i].interface = 'Wifi'
-    print 'Neighbors are'
+
     for neighbor in neighbors:
-        print "Node" + str(neighbor.nodeID)
         routing_Table.table[neighbor.nodeID].networkID = neighbor.nodeID
         routing_Table.table[neighbor.nodeID].nextHop = neighbor.nodeIP
         routing_Table.table[neighbor.nodeID].cost = float(raw_input("Enter cost for node " + str(neighbor.nodeID) + ':'))
+
+    # Generate initial cost_Matrix
     cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
+
+    for node in neighbors:
+        cost_Matrix[self_id][node.nodeID] = routing_Table.table[node.nodeID].cost
     cost_Matrix[self_id][self_id] = 0.0
     routing_Table.print_routing_table()
     print cost_Matrix
 
-    update_nodes(UDP_PORT, cost_Matrix)
-    update_routing_table(nodes[self_id].nodeIP, cost_Matrix, UDP_PORT)
+    update_nodes(UDP_PORT, cost_Matrix) # Pass initial routing table to neighbors
+
+    update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
 
     while True:
         pass

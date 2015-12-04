@@ -6,7 +6,7 @@ class Route:
         self.networkID = 0
         self.nextHop = ""
         self.cost = 0.0
-        self.interface = "Wifi?"
+        self.interface = "Wifi"
 
     def update_next_hop(self, next_ip):
         self.nextHop = next_ip
