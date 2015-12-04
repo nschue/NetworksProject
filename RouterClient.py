@@ -20,16 +20,15 @@ class Node:
 # Opens a socket to listen other nodes
 def node_listen_socket(port):
     global nodes
-    listen_socket = socket(AF_INET, SOCK_STREAM)
+    listen_socket = socket(AF_INET, SOCK_DGRAM)
     print 'Socket Created'
     listen_socket.bind(('', port))
-    listen_socket.listen(5)
     print 'Listening for nodes'
     while True:
         # Establish the connection
         connectionSocket, addr = listen_socket.accept()
         try:
-            message = connectionSocket.recv(4096)
+            message, address = connectionSocket.recvfrom(4096)
             # size may need to be adjusted when format of the packet has be finalized
             print addr
             # print message
@@ -74,6 +73,7 @@ def server_listen_socket(port):
     except:
         print "Error in server_listen_socket"
 
+
 # Connects to the server to be added to the list of nodes
 def connectToServer(TCP_IP, TCP_PORT):
     sock = socket(AF_INET, SOCK_STREAM)
@@ -86,19 +86,18 @@ def connectToServer(TCP_IP, TCP_PORT):
 
 # Function to call when sending out routing table information
 # Thinking updateNode function will iterate through the nodes list passing each node into this fuction
-def send_to_node(node,TCP_PORT, data):
-    sock = socket(AF_INET, SOCK_STREAM)
+def send_to_node(node, udp_port, data):
+    sock = socket(AF_INET, SOCK_DGRAM)
     try:
-        sock.connect((node.nodeIP, TCP_PORT))
-        sock.send(json.dumps(data))  # Routing Table will be passed through here
+        sock.sendto(json.dumps(data),node.nodeIP, udp_port )  # Routing Table will be passed through here
     except:
         print ("Error in send_to_node")
 
 
 # iterate through each node in the neighbors list to pass the updated routing information to each node
-def update_nodes(TCP_PORT, data):
+def update_nodes(udp_port, data):
     for node in neighbors:
-        send_to_node(node, TCP_PORT, data)
+        send_to_node(node, udp_port, data)
     return
 
 
@@ -128,10 +127,11 @@ def main():
     global self_id
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
+    UDP_PORT = 520
     serverConnectThread = Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
     server_listen_socket(TCP_PORT) # listens for node information coming from server
-    node_listen_thread = Thread(target=node_listen_socket, args=(TCP_PORT,))
+    node_listen_thread = Thread(target=node_listen_socket, args=(UDP_PORT,))
     node_listen_thread.start()
     print 'Still running main'
     # after server node information has been collected
