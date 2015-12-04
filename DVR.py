@@ -16,7 +16,6 @@ def dvr(number_nodes, costmat):
 
     for i in range(number_nodes):
         for j in range(number_nodes):
-            costmat[i][i]=0
             rt[i].dist[j]=costmat[i][j]
             rt[i].fro[j]=j
 
@@ -30,6 +29,9 @@ def dvr(number_nodes, costmat):
     for i in range(number_nodes):
         for j in range(number_nodes):
             costmat[i][j] = rt[i].dist[j]
+    print "DVR Matrix"
+    print costmat
+    print 'Exiting DVR'
     return costmat
 
 

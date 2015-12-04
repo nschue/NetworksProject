@@ -67,7 +67,6 @@ def server_listen_socket(port):
             temp_node.nodeID = int(message[2 * i])
             temp_node.nodeIP = message[2 * i + 1]
             nodes.append(temp_node)
-
         listen_socket.close()
         print'Leaving server_listen_socket'
         # Need to parse message and store information
@@ -113,9 +112,9 @@ def update_routing_table(node_ip, new_cost_matrix, tcp_port):
     update_node_id = node_ip_list.index(node_ip)
     for node in nodes:
         cost_Matrix[update_node_id][node.nodeID] = new_cost_matrix[update_node_id][node.nodeID]
-    dvr_cost_matrix = dvr(len(neighbors), cost_Matrix)
+    dvr_cost_matrix = dvr(len(nodes), cost_Matrix)
 
-    # if cost to any nodes
+    # if cost to any nodes have changed from self.node send an update to neighbors
     if dvr_cost_matrix[self_id] != cost_Matrix[self_id]:
         update_nodes(tcp_port, dvr_cost_matrix)
     cost_Matrix = dvr_cost_matrix
@@ -149,8 +148,8 @@ def main():
     cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
     for node in neighbors:
         print "Node", node.nodeID,": ", node.nodeIP
-        cost_Matrix[self_id][node.nodeID] = int(raw_input("Enter cost to node" + str(node.nodeID)))
-    cost_Matrix[self_id][self_id] = 0
+        cost_Matrix[self_id][node.nodeID] = float(raw_input("Enter cost to node" + str(node.nodeID)))
+    cost_Matrix[self_id][self_id] = 0.0
     print cost_Matrix
 
     update_nodes(TCP_PORT, cost_Matrix)
