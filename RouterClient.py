@@ -1,6 +1,7 @@
 from socket import *
 from threading import Thread
 import json
+import random
 
 # Global variables
 nodes = []
@@ -28,8 +29,9 @@ def node_listen_socket(port):
         try:
             message = connectionSocket.recv(4096)
             # size may need to be adjusted when format of the packet has be finalized
+            print addr
             print message
-            #message = json.loads(message)
+            message = json.loads(message)
             print message
             # Need to parse message and store information
         except:
@@ -97,6 +99,14 @@ def update_nodes(TCP_PORT, data):
     return
 
 
+# Updates current routing table with new data
+def update_routing_table(cost_matrix, new_cost_matrix):
+    node_ip_list = []
+    for node in nodes:
+        node_ip_list.append(node.nodeIP)
+    node_ip_list.index()
+
+
 def main():
     global cost_Matrix
     TCP_IP = raw_input("Enter Server IP: ")
@@ -121,7 +131,7 @@ def main():
     cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
     for node in neighbors:
         print "Node", node.nodeID,": ", node.nodeIP
-        cost_Matrix[self_id][node.nodeID] = 1;
+        cost_Matrix[self_id][node.nodeID] = raw_input("Enter cost to node" + node.nodeID)
     cost_Matrix[self_id][self_id] = 0;
     print cost_Matrix
 
