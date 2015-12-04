@@ -38,7 +38,6 @@ class RoutingTable:
             self.table[neighbor.nodeID].nextHop = neighbor.nodeIP
             self.table[neighbor.nodeID].cost = float(raw_input("Enter cost for node: " + str(neighbor.nodeID)))
 
-
     def print_routing_table(self):
         for route in self.table:
             try:
