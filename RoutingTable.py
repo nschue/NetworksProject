@@ -30,12 +30,14 @@ class RoutingTable:
             self.nodes.append(node)
             self.table.append(Route)
             self.table[node.nodeID].networkID = node.nodeID
-            self.table[node.nodeID].interface = "Wifi" 
+            self.table[node.nodeID].interface = "Wifi"
 
 
         for neighbor in neighbors:
 
             self.neighbors.append(neighbor)
+            self.table[neighbor.nodeID].nextHop = neighbor.nodeIP
+            self.table[neighbor.nodeID].nextHop = raw_input("Enter cost for node: " + neighbor.nodeID)
 
 
 
