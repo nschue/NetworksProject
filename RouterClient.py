@@ -153,6 +153,8 @@ def main():
     print cost_Matrix
 
     update_nodes(TCP_PORT, cost_Matrix)
+    update_routing_table(len(nodes), cost_Matrix, TCP_PORT)
+
     while True:
         pass
 
