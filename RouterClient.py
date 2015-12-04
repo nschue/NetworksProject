@@ -1,12 +1,14 @@
 from socket import *
 from threading import Thread
 import json
+from DVR import *
 import random
 
 # Global variables
 nodes = []
 neighbors = []
 cost_Matrix = []
+self_id = 0
 
 
 class Node:
@@ -34,7 +36,8 @@ def node_listen_socket(port):
             message = json.loads(message)
             print message
             # Need to parse message and store information
-            update_routing_table(addr[0], message)
+            update_thread = Thread(target=update_routing_table, args=(addr[0], message, port,))
+            update_thread.start()
         except:
             print "Error in createListenSocket"
 
@@ -101,20 +104,29 @@ def update_nodes(TCP_PORT, data):
 
 
 # Updates current routing table with new data
-def update_routing_table(node_ip, new_cost_matrix):
+def update_routing_table(node_ip, new_cost_matrix, tcp_port):
     global cost_Matrix
+    global self_id
     node_ip_list = []
     for node in nodes:
         node_ip_list.append(node.nodeIP)
     update_node_id = node_ip_list.index(node_ip)
     for node in nodes:
         cost_Matrix[update_node_id][node.nodeID] = new_cost_matrix[update_node_id][node.nodeID]
+    dvr_cost_matrix = dvr(len(neighbors), cost_Matrix)
+
+    # if cost to any nodes
+    if dvr_cost_matrix[self_id] != cost_Matrix[self_id]:
+        update_nodes(tcp_port, dvr_cost_matrix)
+    cost_Matrix = dvr_cost_matrix
+
     print "New routing table"
     print cost_Matrix
 
 
 def main():
     global cost_Matrix
+    global self_id
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     serverConnectThread = Thread(target=connectToServer(TCP_IP,TCP_PORT))
@@ -138,7 +150,7 @@ def main():
     for node in neighbors:
         print "Node", node.nodeID,": ", node.nodeIP
         cost_Matrix[self_id][node.nodeID] = int(raw_input("Enter cost to node" + str(node.nodeID)))
-    cost_Matrix[self_id][self_id] = 0;
+    cost_Matrix[self_id][self_id] = 0
     print cost_Matrix
 
     update_nodes(TCP_PORT, cost_Matrix)
