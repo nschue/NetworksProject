@@ -23,9 +23,7 @@ class Node:
 def node_listen_socket(port):
     global nodes
     listen_socket = socket(AF_INET, SOCK_DGRAM)
-    print 'Socket Created'
     listen_socket.bind(('', port))
-    print 'Listening for nodes'
     while True:
         # Establish the connection
         try:
@@ -53,12 +51,10 @@ def server_listen_socket(port):
     try:
         connection_socket, addr = listen_socket.accept()
         message = connection_socket.recv(1024)
+
         # size may need to be adjusted when format of the packet has be finalized
-        # print message
         message = message.strip("[]")
-        # print message
         message = message.replace("'", "")
-        # print message
         message = message.split(',')
         print message
 
@@ -128,6 +124,7 @@ def main():
     global self_id
     global routing_Table
     global nodes
+    global neighbors
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     UDP_PORT = 520
@@ -149,9 +146,6 @@ def main():
             neighbor_input = raw_input()
     print 'Neighbor nodes are: '
     cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
-    for node in neighbors:
-        print "Node", node.nodeID,": ", node.nodeIP
-        node.cost = cost_Matrix[self_id][node.nodeID] = float(raw_input("Enter cost to node" + str(node.nodeID)))
     cost_Matrix[self_id][self_id] = 0.0
     routing_Table.create_routing_table(nodes, neighbors)
     routing_Table.print_routing_table()
