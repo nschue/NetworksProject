@@ -1,5 +1,5 @@
 from socket import *
-import threading
+from threading import Thread
 import json
 
 # Global variables
@@ -21,7 +21,7 @@ def node_listen_socket(port):
     print 'Socket Created'
     listen_socket.bind(('', port))
     listen_socket.listen(5)
-    print 'Ready to serve...'
+    print 'Listening for nodes'
     while True:
         # Establish the connection
         connectionSocket, addr = listen_socket.accept()
@@ -29,7 +29,7 @@ def node_listen_socket(port):
             message = connectionSocket.recv(4096)
             # size may need to be adjusted when format of the packet has be finalized
             print message
-            message = json.loads(message)
+            #message = json.loads(message)
             print message
             # Need to parse message and store information
         except:
@@ -101,11 +101,12 @@ def main():
     global cost_Matrix
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
-    serverConnectThread = threading.Thread(target=connectToServer(TCP_IP,TCP_PORT))
+    serverConnectThread = Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
     server_listen_socket(TCP_PORT) # listens for node information coming from server
-    # node_listen_thread = threading.Thread(target=node_listen_socket(TCP_PORT))
-    # node_listen_thread.start()
+    node_listen_thread = Thread(target=node_listen_socket, args=(TCP_PORT,))
+    node_listen_thread.start()
+    print 'Still running main'
     # after server node information has been collected
     # Need to compare client IP with nodeIPs to determine nodeID
     self_id = int(raw_input("Enter clients nodeID: "))
@@ -129,7 +130,7 @@ def main():
         pass
 
 # ## Start of the program ### #
-main()
+main_thread = Thread(main())
 
 
 
