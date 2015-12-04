@@ -144,9 +144,16 @@ def main():
             # Adds neighbor from the nodes list which is filled by the server
         finally:
             neighbor_input = raw_input()
-    for node in nodes:
+    for i in range(len(nodes)):
         routing_Table.table.append(Route)
+
+    for i in range(len(nodes)):
+        routing_Table.table[i].networkID = i
+        routing_Table.table[i].cost = 0.0
+        routing_Table.table[i].interface = 'Wifi'
+    print 'Neighbors are'
     for neighbor in neighbors:
+        print "Node" + str(neighbor.nodeID)
         routing_Table.table[neighbor.nodeID].networkID = neighbor.nodeID
         routing_Table.table[neighbor.nodeID].nextHop = neighbor.nodeIP
         routing_Table.table[neighbor.nodeID].cost = float(raw_input("Enter cost for node " + str(neighbor.nodeID) + ':'))
