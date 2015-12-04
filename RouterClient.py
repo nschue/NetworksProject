@@ -131,7 +131,7 @@ def main():
     cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
     for node in neighbors:
         print "Node", node.nodeID,": ", node.nodeIP
-        cost_Matrix[self_id][node.nodeID] = raw_input("Enter cost to node" + node.nodeID)
+        cost_Matrix[self_id][node.nodeID] = raw_input("Enter cost to node" + str(node.nodeID))
     cost_Matrix[self_id][self_id] = 0;
     print cost_Matrix
 
