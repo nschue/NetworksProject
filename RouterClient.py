@@ -31,7 +31,7 @@ def node_listen_socket(port):
         try:
             message, address = listen_socket.recvfrom(4096)
             # size may need to be adjusted when format of the packet has be finalized
-            print address
+            print str(address)
             # print message
             message = json.loads(message)
             print message
@@ -90,7 +90,7 @@ def connectToServer(TCP_IP, TCP_PORT):
 def send_to_node(node, udp_port, data):
     sock = socket(AF_INET, SOCK_DGRAM)
     try:
-        sock.sendto(json.dumps(data),node.nodeIP, udp_port )  # Routing Table will be passed through here
+        sock.sendto(json.dumps(data), (node.nodeIP, udp_port))  # Routing Table will be passed through here
     except:
         print ("Error in send_to_node")
 
@@ -127,6 +127,7 @@ def main():
     global cost_Matrix
     global self_id
     global routing_Table
+    global nodes
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     UDP_PORT = 520
@@ -157,7 +158,7 @@ def main():
     print cost_Matrix
 
     update_nodes(UDP_PORT, cost_Matrix)
-    update_routing_table(len(nodes), cost_Matrix, UDP_PORT)
+    update_routing_table(nodes[self_id].nodeIP, cost_Matrix, UDP_PORT)
 
     while True:
         pass
