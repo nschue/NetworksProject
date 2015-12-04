@@ -30,10 +30,11 @@ def node_listen_socket(port):
             message = connectionSocket.recv(4096)
             # size may need to be adjusted when format of the packet has be finalized
             print addr
-            print message
+            # print message
             message = json.loads(message)
             print message
             # Need to parse message and store information
+            update_routing_table(addr[0], message)
         except:
             print "Error in createListenSocket"
 
@@ -100,11 +101,16 @@ def update_nodes(TCP_PORT, data):
 
 
 # Updates current routing table with new data
-def update_routing_table(cost_matrix, new_cost_matrix):
+def update_routing_table(node_ip, new_cost_matrix):
+    global cost_Matrix
     node_ip_list = []
     for node in nodes:
         node_ip_list.append(node.nodeIP)
-    node_ip_list.index()
+    update_node_id = node_ip_list.index(node_ip)
+    for node in nodes:
+        cost_Matrix[update_node_id][node.nodeID] = new_cost_matrix[update_node_id][node.nodeID]
+    print "New routing table"
+    print cost_Matrix
 
 
 def main():
@@ -131,7 +137,7 @@ def main():
     cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
     for node in neighbors:
         print "Node", node.nodeID,": ", node.nodeIP
-        cost_Matrix[self_id][node.nodeID] = raw_input("Enter cost to node" + str(node.nodeID))
+        cost_Matrix[self_id][node.nodeID] = int(raw_input("Enter cost to node" + str(node.nodeID)))
     cost_Matrix[self_id][self_id] = 0;
     print cost_Matrix
 
