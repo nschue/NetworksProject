@@ -84,9 +84,16 @@ def connectToServer(TCP_IP, TCP_PORT):
 # Thinking updateNode function will iterate through the nodes list passing each node into this fuction
 def send_to_node(node, udp_port, routing_table):
     sock = socket(AF_INET, SOCK_DGRAM)
+    global nodes
 
+    route_table_list = []
+    for i in range(len(nodes)):
+        route = []
+        for element in routing_Table.table[i]:
+            route.append(element)
+        route_table_list.append(route)
     try:
-        sock.sendto(json.dumps(routing_table), (node.nodeIP, udp_port))  # Routing Table will be passed through here
+        sock.sendto(json.dumps(route_table_list), (node.nodeIP, udp_port))  # Routing Table will be passed through here
     except:
         print ("Error in send_to_node")
 
@@ -113,7 +120,7 @@ def update_routing_table(node_ip, neighbor_routing_table, udp_port):
 
     # Populate cost matrix with new costs
     for i in range(len(nodes)):
-        cost_Matrix[update_node_id][i]= neighbor_routing_table.table[i].cost
+        cost_Matrix[update_node_id][i]= neighbor_routing_table.table[i][3]
     dvr_cost_matrix, next_hops = dvr(len(nodes), cost_Matrix)
 
     # if cost to any nodes have changed from self.node send an update to neighbors
@@ -175,7 +182,7 @@ def main():
     routing_Table.print_routing_table()
     print cost_Matrix
 
-    update_nodes(UDP_PORT, cost_Matrix) # Pass initial routing table to neighbors
+    update_nodes(UDP_PORT, routing_Table) # Pass initial routing table to neighbors
 
     update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
 
