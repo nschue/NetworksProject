@@ -153,19 +153,14 @@ def main():
     global routing_Table
     global nodes
     global neighbors
-
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     UDP_PORT = 520
-
     serverConnectThread = Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
     server_listen_socket(TCP_PORT)  # listens for node information coming from server
     node_listen_thread = Thread(target=node_listen_socket, args=(UDP_PORT,))
     node_listen_thread.start()
-
-    cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
-
     # after server node information has been collected
     # Need to compare client IP with nodeIPs to determine nodeID
     self_id = int(raw_input("Enter clients nodeID: "))
@@ -190,6 +185,8 @@ def main():
         routing_Table.table[neighbor.nodeID].cost = float(raw_input("Enter cost for node " + str(neighbor.nodeID) + ':'))
 
     # Generate initial cost_Matrix
+    cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
+
     for node in neighbors:
         cost_Matrix[self_id][node.nodeID] = routing_Table.table[node.nodeID].cost
     cost_Matrix[self_id][self_id] = 0.0
