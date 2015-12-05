@@ -37,6 +37,7 @@ def node_listen_socket(port):
             update_thread.start()
         except:
             print "Error in createListenSocket"
+            traceback.print_exc()
 
 
 def server_listen_socket(port):
@@ -68,6 +69,7 @@ def server_listen_socket(port):
         # node address information from server
     except:
         print "Error in server_listen_socket"
+        traceback.print_exc()
 
 
 # Connects to the server to be added to the list of nodes
@@ -77,6 +79,7 @@ def connectToServer(TCP_IP, TCP_PORT):
         sock.connect((TCP_IP, TCP_PORT))
     except:
         print"Error in connectToServer"
+        traceback.print_exc()
         connectToServer(raw_input("Enter Server IP and try again: "), TCP_PORT)
 
 
@@ -89,13 +92,16 @@ def send_to_node(node, udp_port, routing_table):
     route_table_list = []
     for i in range(len(nodes)):
         route = []
-        for element in routing_Table.table[i]:
-            route.append(element)
+        route.append(routing_table.table[i].networkID)
+        route.append(routing_table.table[i].nextHop)
+        route.append(routing_table.table[i].cost)
+        route.append(routing_table.table[i].interface)
         route_table_list.append(route)
     try:
         sock.sendto(json.dumps(route_table_list), (node.nodeIP, udp_port))  # Routing Table will be passed through here
     except:
         print ("Error in send_to_node")
+        traceback.print_exc()
 
 
 # iterate through each node in the neighbors list to pass the updated routing information to each node
