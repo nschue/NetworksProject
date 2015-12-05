@@ -2,7 +2,6 @@ from socket import *
 from threading import Thread
 import json
 import traceback
-import time
 from DVR import *
 from RoutingTable import *
 
@@ -19,7 +18,6 @@ class Node:
         self.nodeIP = ''
         self.nodeID = 0
         self.cost = 0.0
-        self.start = 0
 
 
 # Opens a socket to listen other nodes
@@ -127,16 +125,14 @@ def update_routing_table(node_ip, neighbor_routing_table, udp_port):
         node_ip_list.append(node.nodeIP)
     update_node_id = node_ip_list.index(node_ip)
 
-    nodes[update_node_id].start = time.time()
-
     # Populate cost matrix with new costs
     for i in range(len(nodes)):
-        cost_Matrix[update_node_id][i]= neighbor_routing_table[i][3]
+        cost_Matrix[update_node_id][i]= neighbor_routing_table[i][2]
     dvr_cost_Matrix, next_hops = dvr(len(nodes), cost_Matrix)
 
     for i in range(len(next_hops)):
-        routing_Table[i].nextHop = node[next_hops[i]].nodeIP
-        routing_Table[i].cost = dvr_cost_Matrix[self_id][i]
+        routing_Table.table[i].nextHop = nodes[next_hops[i]].nodeIP
+        routing_Table.table[i].cost = dvr_cost_Matrix[self_id][i]
 
     # if cost to any nodes have changed from self.node send an update to neighbors
     if dvr_cost_Matrix[self_id] != cost_Matrix[self_id]:
@@ -198,20 +194,10 @@ def main():
 
     update_nodes(UDP_PORT, routing_Table) # Pass initial routing table to neighbors
 
-    update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
+    #update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
 
-    #Push an advertisement to all neighbors
     while True:
-        time.sleep(15)
-        update_nodes(UDP_PORT, routing_Table)
-        for x in nodes:
-            if x.start - time.time() > float (30):
-                cost_Matrix[self_id][x.nodeID] = float ('inf')
-                routing_Table.table[x.nodeID].cost = float ('inf')
         pass
 
-### Start of the program ###
+# ## Start of the program ### #
 main_thread = Thread(main())
-
-
-
