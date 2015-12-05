@@ -2,6 +2,7 @@ from socket import *
 from threading import Thread
 import json
 import traceback
+import time
 from DVR import *
 from RoutingTable import *
 
@@ -18,6 +19,7 @@ class Node:
         self.nodeIP = ''
         self.nodeID = 0
         self.cost = 0.0
+        self.start = 0
 
 
 # Opens a socket to listen other nodes
@@ -125,6 +127,8 @@ def update_routing_table(node_ip, neighbor_routing_table, udp_port):
         node_ip_list.append(node.nodeIP)
     update_node_id = node_ip_list.index(node_ip)
 
+    nodes[update_node_id].start = time.time()
+
     # Populate cost matrix with new costs
     for i in range(len(nodes)):
         cost_Matrix[update_node_id][i]= neighbor_routing_table[i][2]
@@ -149,14 +153,19 @@ def main():
     global routing_Table
     global nodes
     global neighbors
+
     TCP_IP = raw_input("Enter Server IP: ")
     TCP_PORT = 8007
     UDP_PORT = 520
+
     serverConnectThread = Thread(target=connectToServer(TCP_IP,TCP_PORT))
     serverConnectThread.start()
     server_listen_socket(TCP_PORT)  # listens for node information coming from server
     node_listen_thread = Thread(target=node_listen_socket, args=(UDP_PORT,))
     node_listen_thread.start()
+
+    cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
+
     # after server node information has been collected
     # Need to compare client IP with nodeIPs to determine nodeID
     self_id = int(raw_input("Enter clients nodeID: "))
@@ -181,8 +190,6 @@ def main():
         routing_Table.table[neighbor.nodeID].cost = float(raw_input("Enter cost for node " + str(neighbor.nodeID) + ':'))
 
     # Generate initial cost_Matrix
-    cost_Matrix = [[float('inf') for x in range(len(nodes))] for x in range(len(nodes))]
-
     for node in neighbors:
         cost_Matrix[self_id][node.nodeID] = routing_Table.table[node.nodeID].cost
     cost_Matrix[self_id][self_id] = 0.0
@@ -193,10 +200,17 @@ def main():
 
     #update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
 
+    #Push an advertisement to all neighbors
     while True:
+        time.sleep(15)
+        update_nodes(UDP_PORT, routing_Table)
+        for x in nodes:
+            if x.start - time.time() > float (30):
+                cost_Matrix[self_id][x.nodeID] = float ('inf')
+                routing_Table.table[x.nodeID].cost = float ('inf')
         pass
 
-# ## Start of the program ### #
+### Start of the program ###
 main_thread = Thread(main())
 
 
