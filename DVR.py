@@ -20,6 +20,7 @@ def dvr(number_nodes, costmat):
             rt[i].dist[j] = costmat[i][j]
             rt[i].fro[j] = j
 
+    # Iterates in reverse to calculate lowest node with tie
     for i in list(reversed(range(number_nodes))):
         for j in list(reversed(range(number_nodes))):
             for k in list(reversed(range(number_nodes))):
@@ -27,7 +28,6 @@ def dvr(number_nodes, costmat):
                     rt[i].dist[j] = rt[i].dist[k]+rt[k].dist[j]
                     rt[i].fro[j] = k
                     next_hop_list.append(k)
-
 
     for i in range(number_nodes):
         for j in range(number_nodes):
