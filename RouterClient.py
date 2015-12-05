@@ -19,7 +19,6 @@ class Node:
         self.nodeIP = ''
         self.nodeID = 0
         self.cost = 0.0
-        self.start = time.time()
 
 
 # Opens a socket to listen other nodes
@@ -65,7 +64,6 @@ def server_listen_socket(port):
             temp_node = Node()
             temp_node.nodeID = int(message[2 * i])
             temp_node.nodeIP = message[2 * i + 1]
-            temp_node.start = time.time()
             nodes.append(temp_node)
         listen_socket.close()
         print'Leaving server_listen_socket'
@@ -127,7 +125,6 @@ def update_routing_table(node_ip, neighbor_routing_table, udp_port):
     for node in nodes:
         node_ip_list.append(node.nodeIP)
     update_node_id = node_ip_list.index(node_ip)
-    nodes[update_node_id].start = time.time()
 
     # Populate cost matrix with new costs
     for i in range(len(nodes)):
@@ -203,10 +200,6 @@ def main():
     while True:
         time.sleep(15)
         update_nodes(UDP_PORT, routing_Table)
-        for x in nodes:
-            if x.start - time.time() > float (30):
-                cost_Matrix[self_id][x.nodeID] = float ('inf')
-                routing_Table.table[x.nodeID].cost = float ('inf')
         pass
 
 ### Start of the program ###
