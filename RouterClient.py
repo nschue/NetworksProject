@@ -1,6 +1,7 @@
 from socket import *
 from threading import Thread
 import json
+import traceback
 from DVR import *
 from RoutingTable import *
 
@@ -126,19 +127,19 @@ def update_routing_table(node_ip, neighbor_routing_table, udp_port):
 
     # Populate cost matrix with new costs
     for i in range(len(nodes)):
-        cost_Matrix[update_node_id][i]= neighbor_routing_table.table[i][3]
-    dvr_cost_matrix, next_hops = dvr(len(nodes), cost_Matrix)
-
-    # if cost to any nodes have changed from self.node send an update to neighbors
-    if dvr_cost_matrix[self_id] != cost_Matrix[self_id]:
-        update_nodes(udp_port, dvr_cost_matrix)
-    cost_Matrix = dvr_cost_matrix
+        cost_Matrix[update_node_id][i]= neighbor_routing_table[i][3]
+    dvr_cost_Matrix, next_hops = dvr(len(nodes), cost_Matrix)
 
     for i in range(len(next_hops)):
         routing_Table[i].nextHop = node[next_hops[i]].nodeIP
-        routing_Table[i].cost = cost_Matrix[self_id][i]
+        routing_Table[i].cost = dvr_cost_Matrix[self_id][i]
 
-    print "New routing table"
+    # if cost to any nodes have changed from self.node send an update to neighbors
+    if dvr_cost_Matrix[self_id] != cost_Matrix[self_id]:
+        update_nodes(udp_port, routing_Table)
+    cost_Matrix = dvr_cost_Matrix
+
+    print "New cost matrix"
     print cost_Matrix
 
 
