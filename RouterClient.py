@@ -127,12 +127,12 @@ def update_routing_table(node_ip, neighbor_routing_table, udp_port):
 
     # Populate cost matrix with new costs
     for i in range(len(nodes)):
-        cost_Matrix[update_node_id][i]= neighbor_routing_table[i][3]
+        cost_Matrix[update_node_id][i]= neighbor_routing_table[i][2]
     dvr_cost_Matrix, next_hops = dvr(len(nodes), cost_Matrix)
 
     for i in range(len(next_hops)):
-        routing_Table[i].nextHop = node[next_hops[i]].nodeIP
-        routing_Table[i].cost = dvr_cost_Matrix[self_id][i]
+        routing_Table.table[i].nextHop = nodes[next_hops[i]].nodeIP
+        routing_Table.table[i].cost = dvr_cost_Matrix[self_id][i]
 
     # if cost to any nodes have changed from self.node send an update to neighbors
     if dvr_cost_Matrix[self_id] != cost_Matrix[self_id]:
@@ -191,7 +191,7 @@ def main():
 
     update_nodes(UDP_PORT, routing_Table) # Pass initial routing table to neighbors
 
-    update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
+    #update_routing_table(nodes[self_id].nodeIP, routing_Table, UDP_PORT)
 
     while True:
         pass
